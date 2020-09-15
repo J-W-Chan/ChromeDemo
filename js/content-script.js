@@ -1,3 +1,5 @@
+const STORAGE_KEY = "AMZ_AC";
+
 // 注意，必须设置了run_at=document_start 此段代码才会生效
 document.addEventListener('DOMContentLoaded', function () {
     // 注入自定义JS
@@ -8,26 +10,30 @@ document.addEventListener('DOMContentLoaded', function () {
     if (signInBtn) {
         signInBtn.addEventListener("click", function () {
 
-            //var site = document.getElementsByName("siginIn")[0].action;
+            var site = "";
+            var form = document.getElementsByName("siginIn");
+            if (form.length > 0) {
+                site = form[0].action;
+            }
             var username = document.getElementById("ap_email").value;
             var password = document.getElementById("ap_password").value;
 
+            var amazonSiteArray = new Array();
+            amazonSiteArray.push({ site: site, username: username, password: password });
+
             var storage = window.localStorage;
+            storage.setItem(STORAGE_KEY, JSON.stringify(amazonSiteArray));
+            //storage.setItem("password", password);
+            //var amazonSite = {
+            //    key: STORAGE_KEY,
+            //    value: JSON.stringify(amazonSiteArray)
+            //};
 
-            //chrome.storage.sync()
-
-            storage.setItem("username", username);
-            storage.setItem("password", password);
-
-            chrome.storage.sync.set({ username: username, password: password }, function () {
+            chrome.storage.sync.set({ STORAGE_KEY: STORAGE_KEY, amazonSiteArray }, function () {
                 console.log("保存成功");
             });
 
-            //chrome.storage.sync.set({ username: "ssss", password: "sssss" }, function () {
-            //    console.log("保存成功");
-            //});
-
-            //console.log("sit：" + site);
+            console.log("site：" + site);
             console.log("username: " + username);
             console.log("password: " + password);
 
